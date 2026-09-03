@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kathmandu Valley Heritage Guide
 
-## Getting Started
+A static Next.js travel-guide site for Kathmandu Valley, built from the source data in `places-data.json` and styled around a dark temple-inspired palette.
 
-First, run the development server:
+## Run locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `app/` contains the route pages and global layout
+- `components/` contains the site header and search UI
+- `lib/places.ts` holds the site data model, slug generation, and static route helpers
+- `places-data.json` is the authoritative content source for all 51 heritage sites
 
-## Learn More
+## Adding new places
 
-To learn more about Next.js, take a look at the following resources:
+1. Edit `places-data.json`.
+2. Add a new object with `name`, `district`, and `description`.
+3. Restart the dev server or rebuild to regenerate static routes.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The app derives slugs and routes automatically from the data file.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Adding photography later
 
-## Deploy on Vercel
+Use a local `/public` image set or a CMS-backed image field for each site. Keep alt text descriptive and mark placeholders clearly until licensed photography is available.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- The site is pre-rendered with static generation and works as a Vercel-ready Next.js app.
+- The data is intentionally read-only and not backed by a database or API.
