@@ -98,16 +98,25 @@ export default function HomePage() {
                 {featured[district].map((place) => (
                   <article key={place.id} className="site-card">
                     {place.image ? (
-                      <div className="relative mb-5 aspect-[16/10] overflow-hidden">
+                      <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-sm border border-[var(--line)]">
                         <Image
                           src={place.image}
                           alt={place.name}
                           fill
-                          className="object-cover"
+                          className="object-cover transition-transform duration-500 hover:scale-105"
                           sizes="(max-width: 768px) 100vw, 33vw"
                         />
                       </div>
-                    ) : null}
+                    ) : (
+                      <div className="relative mb-5 flex aspect-[16/10] flex-col items-center justify-center rounded-sm border border-dashed border-[var(--line)] bg-[rgba(26,20,16,0.3)]">
+                        <span className="text-[0.6rem] uppercase tracking-[0.22em] text-[var(--copper-soft)] opacity-70">
+                          {place.shortName}
+                        </span>
+                        <span className="mt-1 text-[0.55rem] uppercase tracking-[0.14em] text-[var(--muted)] opacity-40">
+                          Photo Pending
+                        </span>
+                      </div>
+                    )}
 
                     <div className="mb-4 flex items-center justify-between gap-3 text-[0.64rem] uppercase tracking-[0.22em] text-[var(--copper)]">
                       <span>{place.district}</span>

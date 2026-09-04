@@ -5,6 +5,9 @@ export type DistrictName = "Kathmandu" | "Lalitpur" | "Bhaktapur";
 export type PlaceSection = {
   title: string;
   content: string;
+  badge?: string;
+  image?: string;
+  imageCaption?: string;
 };
 
 export type Place = {
@@ -15,6 +18,9 @@ export type Place = {
   shortName: string;
   slug: string;
   image?: string;
+  locationText: string;
+  existenceText: string;
+  descriptionText: string;
   sections: PlaceSection[];
   summary: string;
   stats: string[];
@@ -49,8 +55,89 @@ const districtDescriptions: Record<DistrictName, string> = {
     "Bhaktapur preserves the feel of a medieval Newar capital, with its tiered temples, palace compounds, and square-by-square civic texture.",
 };
 
-const keywordPattern =
-  /^(Location|Existence|Description|Descriptions|History|Historical and Religious Importance|Religious Importance|Location and Existence|Location & Existence|Location, Existence & Descriptions|Location, Existence|Location & Existence & Descriptions|Other places|Location and Existence & Descriptions)$/i;
+export const PLACE_IMAGES: Record<string, string> = {
+  "basantapur-durbar-square": "/images/places/ktm_durbar_sqr.jpg",
+  "kathesimbhu-stupa": "/images/places/kathesimbhu.jpg",
+  "narayanhity-palace-museum": "/images/places/Narayanhiti palace.jpg",
+  "tribhuwan-park": "/images/places/Tribhuwan Park.jpg",
+  "swoyambhunath": "/images/places/swoyambhunath.jpg",
+  "jal-binayak-koina-ganesh-chobhar": "/images/places/jalbinayak1.jpg",
+  "taudaha": "/images/places/taudaha.jpg",
+  "shesh-narayan-pharping": "/images/places/sheshnarayan2.jpg",
+  "pharping-hydropower-station-soukhel-pharping": "/images/places/hydrostation.JPG",
+  "dakshinkali-temple": "/images/places/dakshinkali.jpg",
+  "bagh-bhairav-kirtipur": "/images/places/baghbhairab.jpg",
+  "adinath-lokeshwor-chobhar": "/images/places/chobhar adinath.jpg",
+  "patan-durbar-square": "/images/places/patan durbar square.jpg",
+  "rato-machhindranath-tabahal-patan": "/images/places/rato machhindranath.jpg",
+  "hiranya-varna-mahabihar-golden-temple-kwabahal-patan": "/images/places/golden temple.jpg",
+  "kumbheshwara-temple": "/images/places/kumshiva.jpg",
+  "mahabouddha-patan": "/images/places/mahabauddha.jpg",
+  "rudra-varna-mahabihar-ukubahal": "/images/places/ukubahal.jpg",
+  "central-zoo-jawalakhel": "/images/places/zoo.jpg",
+  "ashokan-stupas-patan": "/images/places/lagan stupa.jpg",
+  "godawari": "/images/places/godavari.JPG",
+  "bajrabarahi-chapagaon": "/images/places/bajrabarahi temple.jpg",
+  "nagdaha-dhapakhel": "/images/places/nagdaha.jpg",
+  "santaneshwor-mahadev-jharuwarashi-badegaon": "/images/places/santaneswor.jpg",
+  "karya-vinayak": "/images/places/karyabinayak.jpg",
+  "sikali-khokana": "/images/places/sikali.jpg",
+  "rato-machhindranath-bungamati": "/images/places/machhindra bungamati.jpg",
+  "bhaktapur-durbar-square": "/images/places/bhaktapur Durbar square.jpg",
+  "nyatapola-temple": "/images/places/nyatapol.jpg",
+  "dattatreya-temple": "/images/places/dattatrya.jpg",
+  "siddha-pokhari": "/images/places/siddha pokhari.jpg",
+  "changu-narayan-bhaktapur": "/images/places/changunarayan.jpg",
+  "doleshwor-mahadev-sipadol-bhaktapur": "/images/places/doleswor.jpg",
+  "kailashnath-mahadev-statue-sanga": "/images/places/sanga mahadev.jpg",
+};
+
+const SECTION_IMAGES: Record<string, { image: string; caption: string }> = {
+  // Basantapur sub-monuments
+  "kasthamandap": { image: "/images/places/kasthamandap.jpg", caption: "Historic wooden pavilion Kasthamandap (Maru Sata)" },
+  "gaddi baithak": { image: "/images/places/gaddi baithakk.jpg", caption: "Neoclassical Gaddi Baithak hall" },
+  "kaal bhairav": { image: "/images/places/kaalbhairav.jpg", caption: "Colossal 12ft stone carving of Kaal Bhairav" },
+  "taleju bell": { image: "/images/places/taleju bell.jpg", caption: "Sacred Taleju Bell and ceremonial drums" },
+  "taleju bhawani": { image: "/images/places/taleju ktm.jpg", caption: "Towering Taleju Bhawani temple" },
+  "hanuman dhoka": { image: "/images/places/basantapurmuseum.jpg", caption: "Hanuman Dhoka Royal Palace & Museum" },
+
+  // Patan sub-monuments
+  "krishna mandir": { image: "/images/places/krishna mandir.jpg", caption: "Shikhara-style stone Krishna Mandir" },
+  "mul chowk": { image: "/images/places/mulchowk.jpg", caption: "Sacred ritual courtyard of Mul Chowk" },
+  "sundari chowk": { image: "/images/places/sundari chowk.jpg", caption: "Sundari Chowk featuring the royal Tusha Hiti bath" },
+  "keshav chowk": { image: "/images/places/keshav chowk.jpg", caption: "Keshav Narayan Chowk, courtyard of Patan Museum" },
+  "bhandarkhal": { image: "/images/places/bhandarkhal.jpg", caption: "Bhandarkhal royal garden and water reservoir" },
+  "patan museum": { image: "/images/places/patan museum.jpg", caption: "Patan Museum historical gallery" },
+  "bhimsen temple": { image: "/images/places/bhimsen temple.jpg", caption: "Three-tiered pagoda of Bhimsen" },
+  "vishwanath temple": { image: "/images/places/bishwanath.jpg", caption: "Vishwanath temple with guardian elephants" },
+  "hari shankar temple": { image: "/images/places/harishankar.jpg", caption: "Hari Shankar temple dedicated to Vishnu & Shiva" },
+  "taleju temple": { image: "/images/places/taleju patan.jpg", caption: "Taleju temple overlooking Patan palace" },
+  "char narayan": { image: "/images/places/jagannarayan.jpg", caption: "Char Narayan temple, the oldest in Patan Durbar Square" },
+
+  // Bhaktapur sub-monuments
+  "55 window": { image: "/images/places/55 window palace.jpg", caption: "Palace of 55 Carved Windows" },
+  "national art museum": { image: "/images/places/bhaktapur museum.jpg", caption: "National Art Museum of Bhaktapur" },
+
+  // Ashokan Stupas
+  "southern stupa": { image: "/images/places/lagan stupa.jpg", caption: "Southern Ashokan Stupa at Lagankhel" },
+  "western stupa": { image: "/images/places/pucho thur.jpg", caption: "Western Ashokan Stupa at Pulchowk" },
+  "eastern stupa": { image: "/images/places/teta thur.JPG", caption: "Eastern Ashokan Stupa at Imadol" },
+  "northern stupa": { image: "/images/places/ibahi stupa.jpg", caption: "Northern Ashokan Stupa at Sankhamul" },
+
+  // Other Subsections
+  "bagalamukhi": { image: "/images/places/bagalamukhi.jpg", caption: "Bagalamukhi shrine within Kumbheshwara complex" },
+  "pharping reservoir": { image: "/images/places/pharping reservoir.jpg", caption: "Masonry reservoir and intake channels at Pharping" },
+};
+
+function matchSectionImage(title: string): { image: string; caption: string } | undefined {
+  const lower = title.toLowerCase();
+  for (const [key, val] of Object.entries(SECTION_IMAGES)) {
+    if (lower.includes(key)) {
+      return val;
+    }
+  }
+  return undefined;
+}
 
 function slugifyName(name: string): string {
   return name
@@ -71,46 +158,90 @@ function buildShortName(name: string): string {
   return withComma || withoutParenthesis;
 }
 
-function isHeadingLike(text: string): boolean {
-  const compact = text.replace(/\s+/g, " ").trim();
-  if (!compact || compact.length > 90) return false;
-  if (compact.includes(":")) return false;
-  if (keywordPattern.test(compact)) return false;
-  if (/^[\d.]+/.test(compact)) return false;
-  if (/^(?:[A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,4}|[A-Z][A-Za-z0-9&/()'-]+(?:\s+[A-Z][A-Za-z0-9&/()'-]+){0,5})$/.test(compact)) {
-    return true;
-  }
-  return false;
-}
-
-function parseSections(description: string): PlaceSection[] {
-  const paragraphs = description
+function parseStructuredPlace(description: string): {
+  locationText: string;
+  existenceText: string;
+  descriptionText: string;
+  sections: PlaceSection[];
+} {
+  const blocks = description
     .split(/\n\s*\n+/)
-    .map((item) => item.replace(/\r/g, " ").replace(/\s+/g, " ").trim())
+    .map((item) => item.replace(/\r/g, " ").trim())
     .filter(Boolean);
 
+  let locationText = "";
+  let existenceText = "";
+  let descriptionText = "";
   const sections: PlaceSection[] = [];
-  let currentTitle = "Overview";
-  let currentContent: string[] = [];
 
-  for (const paragraph of paragraphs) {
-    if (isHeadingLike(paragraph)) {
-      if (currentContent.length > 0) {
-        sections.push({ title: currentTitle, content: currentContent.join(" ") });
-      }
-      currentTitle = paragraph;
-      currentContent = [];
+  let currentSubTitle = "";
+  let currentSubContent: string[] = [];
+
+  for (const block of blocks) {
+    if (/^Location:\s*/i.test(block)) {
+      locationText = block.replace(/^Location:\s*/i, "").trim();
       continue;
     }
 
-    currentContent.push(paragraph);
+    if (/^Existence:\s*/i.test(block)) {
+      existenceText = block.replace(/^Existence:\s*/i, "").trim();
+      continue;
+    }
+
+    if (/^Description:\s*/i.test(block)) {
+      descriptionText = block.replace(/^Description:\s*/i, "").trim();
+      continue;
+    }
+
+    // Check if this block looks like a subsection title (short, no terminal punctuation, or title-like)
+    const isTitle =
+      block.length <= 80 &&
+      !block.endsWith(".") &&
+      !block.includes(":\n") &&
+      !block.includes(". ");
+
+    if (isTitle) {
+      if (currentSubTitle && currentSubContent.length > 0) {
+        const secImg = matchSectionImage(currentSubTitle);
+        sections.push({
+          title: currentSubTitle,
+          content: currentSubContent.join("\n\n"),
+          badge: "Monument",
+          image: secImg?.image,
+          imageCaption: secImg?.caption,
+        });
+      }
+      currentSubTitle = block;
+      currentSubContent = [];
+      continue;
+    }
+
+    if (currentSubTitle) {
+      currentSubContent.push(block);
+    } else if (!descriptionText) {
+      descriptionText = block;
+    } else {
+      descriptionText += "\n\n" + block;
+    }
   }
 
-  if (currentContent.length > 0) {
-    sections.push({ title: currentTitle, content: currentContent.join(" ") });
+  if (currentSubTitle && currentSubContent.length > 0) {
+    const secImg = matchSectionImage(currentSubTitle);
+    sections.push({
+      title: currentSubTitle,
+      content: currentSubContent.join("\n\n"),
+      badge: "Monument",
+      image: secImg?.image,
+      imageCaption: secImg?.caption,
+    });
   }
 
-  return sections.length > 1 ? sections : [{ title: "Overview", content: description.replace(/\s+/g, " ").trim() }];
+  return {
+    locationText,
+    existenceText,
+    descriptionText,
+    sections,
+  };
 }
 
 function summarizeDescription(description: string): string {
@@ -147,7 +278,22 @@ function buildPlaceList(): Place[] {
     const slug = nextIndex === 0 ? baseSlug : `${baseSlug}-${nextIndex}`;
     slugUsage.set(baseSlug, nextIndex + 1);
 
-    const sections = parseSections(entry.description);
+    const { locationText, existenceText, descriptionText, sections } = parseStructuredPlace(entry.description);
+
+    // Also populate core sections so backwards-compatible iterators work smoothly
+    const allSections: PlaceSection[] = [];
+    if (locationText) {
+      allSections.push({ title: "Location", content: locationText, badge: "Setting" });
+    }
+    if (existenceText) {
+      allSections.push({ title: "Existence", content: existenceText, badge: "History" });
+    }
+    if (descriptionText) {
+      allSections.push({ title: "Description", content: descriptionText, badge: "Architecture" });
+    }
+    allSections.push(...sections);
+
+    const image = PLACE_IMAGES[slug];
 
     return {
       id: `${districtSlugs[district]}-${slug}`,
@@ -156,9 +302,12 @@ function buildPlaceList(): Place[] {
       description: entry.description,
       shortName: buildShortName(entry.name),
       slug,
-      image: slug === "basantapur-durbar-square" ? "/images/places/ktm_durbar_sqr.jpg" : undefined,
-      sections,
-      summary: summarizeDescription(entry.description),
+      image,
+      locationText,
+      existenceText,
+      descriptionText,
+      sections: allSections,
+      summary: summarizeDescription(descriptionText || entry.description),
       stats: extractStats(entry.description),
     };
   });
