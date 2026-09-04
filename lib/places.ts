@@ -14,6 +14,7 @@ export type Place = {
   description: string;
   shortName: string;
   slug: string;
+  image?: string;
   sections: PlaceSection[];
   summary: string;
   stats: string[];
@@ -155,6 +156,7 @@ function buildPlaceList(): Place[] {
       description: entry.description,
       shortName: buildShortName(entry.name),
       slug,
+      image: slug === "basantapur-durbar-square" ? "/images/places/ktm_durbar_sqr.jpg" : undefined,
       sections,
       summary: summarizeDescription(entry.description),
       stats: extractStats(entry.description),

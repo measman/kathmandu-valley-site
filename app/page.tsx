@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import SearchBox from "@/components/search-box";
 import SiteHeader from "@/components/site-header";
@@ -96,6 +97,18 @@ export default function HomePage() {
               <div className="grid gap-5 md:grid-cols-3">
                 {featured[district].map((place) => (
                   <article key={place.id} className="site-card">
+                    {place.image ? (
+                      <div className="relative mb-5 aspect-[16/10] overflow-hidden">
+                        <Image
+                          src={place.image}
+                          alt={place.name}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                        />
+                      </div>
+                    ) : null}
+
                     <div className="mb-4 flex items-center justify-between gap-3 text-[0.64rem] uppercase tracking-[0.22em] text-[var(--copper)]">
                       <span>{place.district}</span>
                       <span className="opacity-70">{place.stats[0] ?? "Heritage"}</span>

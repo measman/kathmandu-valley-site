@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -72,6 +73,18 @@ export default async function DistrictPage({
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {districtPlaces.map((place) => (
             <article key={place.id} className="site-card">
+              {place.image ? (
+                <div className="relative mb-5 aspect-[16/10] overflow-hidden">
+                  <Image
+                    src={place.image}
+                    alt={place.name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                  />
+                </div>
+              ) : null}
+
               <div className="mb-4 flex items-center justify-between gap-2 text-[0.64rem] uppercase tracking-[0.2em] text-[var(--copper)]">
                 <span>{place.district}</span>
                 <span className="opacity-70">{place.stats[0] ?? "Landmark"}</span>

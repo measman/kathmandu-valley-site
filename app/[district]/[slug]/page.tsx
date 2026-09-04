@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import SiteHeader from "@/components/site-header";
@@ -67,6 +68,19 @@ export default async function PlacePage({
         </div>
 
         <article className="page-panel p-6 sm:p-8 lg:p-10">
+          {place.image ? (
+            <div className="relative mb-8 aspect-[16/9] overflow-hidden">
+              <Image
+                src={place.image}
+                alt={place.name}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 896px) 100vw, 896px"
+              />
+            </div>
+          ) : null}
+
           <div className="mb-8 border-b border-[var(--line)] pb-6">
             <p className="section-label mb-3">Heritage site</p>
             <h1 className="font-display text-4xl tracking-[-0.05em] text-[var(--foreground)] sm:text-5xl">
