@@ -3,10 +3,42 @@ import Image from "next/image";
 
 import SearchBox from "@/components/search-box";
 import SiteHeader from "@/components/site-header";
-import { districtData, getFeaturedPlaces } from "@/lib/places";
+import { getPlaces, districtNames, type DistrictName, type Place } from "@/lib/places";
 
-export default function HomePage() {
-  const featured = getFeaturedPlaces();
+const districtDescriptions: Record<DistrictName, string> = {
+  Kathmandu:
+    "The historic heart of the valley, where temples, courtyards, funeral ghats, and hilltop stupas still mark the city's ceremonial rhythm.",
+  Lalitpur:
+    "Patan carries the valley's most concentrated memory of carved wood, courtyards, and Buddhist monastery life, wrapped around its old royal square.",
+  Bhaktapur:
+    "Bhaktapur preserves the feel of a medieval Newar capital, with its tiered temples, palace compounds, and square-by-square civic texture.",
+};
+
+const districtSlugs: Record<DistrictName, string> = {
+  Kathmandu: "kathmandu",
+  Lalitpur: "lalitpur",
+  Bhaktapur: "bhaktapur",
+};
+
+export default async function HomePage() {
+  const allPlaces = await getPlaces();
+
+  // Build districtData from live Supabase places
+  const districtData = districtNames.map((district) => ({
+    district,
+    slug: districtSlugs[district],
+    description: districtDescriptions[district],
+    places: allPlaces.filter((p) => p.district === district),
+  }));
+
+  // Build featured (first 3 per district)
+  const featured = districtNames.reduce(
+    (acc, district) => {
+      acc[district] = allPlaces.filter((p) => p.district === district).slice(0, 3);
+      return acc;
+    },
+    {} as Record<DistrictName, Place[]>
+  );
 
   return (
     <>

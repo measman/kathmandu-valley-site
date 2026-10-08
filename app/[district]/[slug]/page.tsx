@@ -4,7 +4,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import SiteHeader from "@/components/site-header";
-import { getPlaceByDistrictAndSlug, places } from "@/lib/places";
+import { getPlaces, getPlaceByDistrictAndSlug, places } from "@/lib/places";
 
 export async function generateStaticParams() {
   return places.map((place) => ({
@@ -19,7 +19,10 @@ export async function generateMetadata({
   params: Promise<{ district: string; slug: string }>;
 }): Promise<Metadata> {
   const { district, slug } = await params;
-  const place = getPlaceByDistrictAndSlug(district, slug);
+  const allPlaces = await getPlaces();
+  const place = allPlaces.find(
+    (p) => p.district.toLowerCase() === district && p.slug === slug
+  ) ?? getPlaceByDistrictAndSlug(district, slug);
 
   if (!place) {
     return { title: "Site not found" };
@@ -42,7 +45,10 @@ export default async function PlacePage({
   params: Promise<{ district: string; slug: string }>;
 }) {
   const { district, slug } = await params;
-  const place = getPlaceByDistrictAndSlug(district, slug);
+  const allPlaces = await getPlaces();
+  const place =
+    allPlaces.find((p) => p.district.toLowerCase() === district && p.slug === slug) ??
+    getPlaceByDistrictAndSlug(district, slug);
 
   if (!place) {
     notFound();

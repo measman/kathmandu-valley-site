@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import SiteHeader from "@/components/site-header";
-import { districtData, getDistrictBySlug, getDistrictIntro, places } from "@/lib/places";
+import { getPlaces, getDistrictBySlug, getDistrictIntro } from "@/lib/places";
 
 export async function generateStaticParams() {
   return ["kathmandu", "lalitpur", "bhaktapur"].map((slug) => ({ district: slug }));
@@ -45,7 +45,8 @@ export default async function DistrictPage({
     notFound();
   }
 
-  const districtPlaces = places.filter((place) => place.district === districtName);
+  const allPlaces = await getPlaces();
+  const districtPlaces = allPlaces.filter((place) => place.district === districtName);
 
   return (
     <>

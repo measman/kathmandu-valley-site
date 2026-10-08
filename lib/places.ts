@@ -1,4 +1,5 @@
 import rawPlaces from "../places-data.json";
+import { fetchRawPlaces } from "./supabase";
 
 export type DistrictName = "Kathmandu" | "Lalitpur" | "Bhaktapur";
 
@@ -313,7 +314,61 @@ function buildPlaceList(): Place[] {
   });
 }
 
+// Synchronous list built from local JSON — used by generateStaticParams at build time
 export const places: Place[] = buildPlaceList();
+
+/**
+ * Fetches places from Supabase and applies the same processing as buildPlaceList().
+ * Use this in page components to get live data from the database.
+ * Falls back to the local JSON data if Supabase is unavailable.
+ */
+export async function getPlaces(): Promise<Place[]> {
+  const raw = await fetchRawPlaces();
+  if (raw.length === 0) {
+    // Fallback to local JSON if Supabase returned nothing
+    return places;
+  }
+
+  const slugUsage = new Map<string, number>();
+
+  return raw.map((entry) => {
+    const district = (entry.district as DistrictName) || "Kathmandu";
+    const baseSlug = slugifyName(entry.name);
+    const nextIndex = slugUsage.get(baseSlug) ?? 0;
+    const slug = nextIndex === 0 ? baseSlug : `${baseSlug}-${nextIndex}`;
+    slugUsage.set(baseSlug, nextIndex + 1);
+
+    const { locationText, existenceText, descriptionText, sections } =
+      parseStructuredPlace(entry.description);
+
+    const allSections: PlaceSection[] = [];
+    if (locationText)
+      allSections.push({ title: "Location", content: locationText, badge: "Setting" });
+    if (existenceText)
+      allSections.push({ title: "Existence", content: existenceText, badge: "History" });
+    if (descriptionText)
+      allSections.push({ title: "Description", content: descriptionText, badge: "Architecture" });
+    allSections.push(...sections);
+
+    const image = PLACE_IMAGES[slug];
+
+    return {
+      id: `${districtSlugs[district]}-${slug}`,
+      name: entry.name,
+      district,
+      description: entry.description,
+      shortName: buildShortName(entry.name),
+      slug,
+      image,
+      locationText,
+      existenceText,
+      descriptionText,
+      sections: allSections,
+      summary: summarizeDescription(descriptionText || entry.description),
+      stats: extractStats(entry.description),
+    };
+  });
+}
 export const districtNames = districtOrder;
 export const districtData = districtOrder.map((district) => ({
   district,
